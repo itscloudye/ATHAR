@@ -1,4 +1,3 @@
-[README (1).md](https://github.com/user-attachments/files/34926575/README.1.md)
 # ATHAR | أثر
 
 **أثر — لكل مكان حكاية. (Every place has a story.)**
