@@ -564,3 +564,13 @@ html[lang=en] .compass{left:auto;right:16px}
 .auth-alt a{color:#eecf6d}
 .auth-alt2{text-align:center;margin:0}
 .acct .acct-card{max-width:460px}
+
+/* ---------- v4: nearby panel ---------- */
+.near-panel{position:absolute;z-index:540;bottom:16px;left:50%;transform:translateX(-50%);width:min(360px,calc(100% - 32px));max-height:46vh;overflow:auto;background:#fffaf0;color:#2a1a10;border:1px solid var(--earth);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.28);padding:12px 14px}
+.near-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--bordeaux)}
+.near-x{border:0;background:none;font-size:1.4rem;line-height:1;cursor:pointer;color:inherit}
+.near-panel ol{list-style:none;margin:0;padding:0}
+.near-panel li button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:start;border:0;border-top:1px solid var(--earth);background:none;padding:9px 2px;cursor:pointer;font:inherit;color:inherit}
+.near-panel li:first-child button{border-top:0}
+.near-panel li button:hover span{text-decoration:underline}
+.near-panel small{color:#6b5a3a;white-space:nowrap}
