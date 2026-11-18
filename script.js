@@ -9,8 +9,12 @@ const CATS = {
   castle:{ar:'قلعة',en:'Castle'},
   reserve:{ar:'محمية طبيعية',en:'Nature reserve'},
   nature:{ar:'معلم طبيعي',en:'Natural landmark'},
-  cultural:{ar:'معلم ديني وثقافي',en:'Religious & cultural landmark'}
+  cultural:{ar:'معلم ديني وثقافي',en:'Religious & cultural landmark'},
+  viewpoint:{ar:'مطل',en:'Viewpoint'}
 };
+const PURPOSES={tourism:{ar:'سياحي',en:'Sightseeing'},wellness:{ar:'علاجي',en:'Wellness & therapeutic'}};
+const WELLNESS=new Set(['dead-sea','himma','maein']);
+const usedCats=()=>Object.keys(CATS).filter(k=>DEST.some(d=>d.cat===k));
 const TODO = 'تُضاف لاحقًا';
 
 /* ll = [latitude, longitude]. approx:true marks coordinates placed by area, to be refined. */
@@ -137,9 +141,19 @@ const DEST = [
  intro:'قمة قرب البتراء يعلوها مقام أبيض يُنسب إلى النبي هارون.',
  about:['يرتفع جبل هارون فوق وادي موسى، ويقوم على قمته مقام ذو قبة بيضاء ارتبط بتقاليد دينية متوارثة. وتوجد على سفحه بقايا دير بيزنطي.','يُنصح بالصعود برفقة دليل محلي، وتُضاف التفاصيل العملية لاحقًا.'],
  explore:[['المقام','قبة بيضاء على القمة.'],['مسار من البتراء','طريق جبلي يبدأ من محيط الموقع.'],['إطلالة وادي عربة','أفق فسيح نحو الغرب.']],
- season:'الربيع والخريف',dur:'نصف يوم'}
+ season:'الربيع والخريف',dur:'نصف يوم'},
+{id:'maein',ar:'حمامات ماعين',en:"Ma'in Hot Springs",region:'central',cat:'nature',art:'springs',ll:[31.6,35.6],approx:true,gov:'محافظة مادبا',near:'وادي زرقاء ماعين، على الطريق نحو البحر الميت',
+ intro:'ينابيع حارة معدنية تتدفق من الجبل بشلالات دافئة بين الصخور، قصدها الناس للاستجمام والاستشفاء.',
+ about:['تنبع مياه ماعين الحارة من باطن الأرض في وادٍ عميق قرب مادبا، وتُعرف بمعادنها واستخدامها في الاستجمام والعلاج الطبيعي.','تفاصيل المرافق والأسعار والإحداثيات الدقيقة تُضاف بعد التحقق منها.'],
+ explore:[['الشلالات الساخنة','مياه دافئة تنحدر بين الصخور وتختلف حرارتها من نبع إلى آخر.'],['وادي زرقاء ماعين','وادٍ عميق تحيط به المنحدرات الصخرية.'],['الطريق إلى البحر الميت','يسهل جمع الزيارتين في يوم واحد.']],
+ season:'الخريف والشتاء والربيع',dur:'نصف يوم'},
+{id:'pink-lake',ar:'البحيرة الملونة (الوردية)',en:'The Colored (Pink) Lake',region:'central',cat:'nature',art:'sea',ll:[31.3,35.54],approx:true,gov:TODO,near:'الشاطئ الشرقي للبحر الميت',
+ intro:'بحيرة ملونة قرب شاطئ البحر الميت الشرقي، يميل لونها إلى الوردي، وتُذكر ضمن جولات الشاطئ والملح.',
+ about:['هذه الصفحة قيد الإعداد. موقع البحيرة على الخريطة تقريبي، ويُحدَّث بعد تثبيت الإحداثيات الدقيقة.','قد يتغير مظهر مثل هذه البحيرات بحسب الموسم والظروف، لذلك تُضاف التفاصيل بعد التحقق.'],
+ explore:[['لون البحيرة','يميل إلى الوردي، وقد يختلف بحسب الموسم.'],['شاطئ الملح','يُذكر في الجولات المحلية ضمن الزيارة نفسها.'],['البحر الميت','أخفض نقطة على اليابسة على مقربة من الموقع.']],
+ season:TODO,dur:TODO}
 ];
-DEST.forEach((d,i)=>{d.n=i+1});
+DEST.forEach((d,i)=>{d.n=i+1;d.purpose=WELLNESS.has(d.id)?'wellness':'tourism'});
 
 /* English content, keyed by destination id. Mirrors DEST fields: gov, near, intro, about[], explore[[title,text]], season, dur */
 const EN = {
@@ -262,7 +276,17 @@ const EN = {
  intro:'A peak near Petra crowned by a white shrine attributed to the Prophet Aaron.',
  about:['Jabal Haroun rises above Wadi Musa, and on its summit stands a white-domed shrine tied to inherited religious tradition. The remains of a Byzantine monastery lie on its slope.','Climbing with a local guide is advised, and practical details will be added later.'],
  explore:[['The shrine','A white dome on the summit.'],['The trail from Petra','A mountain route that starts near the site.'],['View of Wadi Araba','A broad horizon to the west.']],
- season:'Spring and autumn',dur:'Half a day'}
+ season:'Spring and autumn',dur:'Half a day'},
+'maein':{gov:'Madaba Governorate',near:"Wadi Zarqa Ma'in, on the way to the Dead Sea",
+ intro:'Hot mineral springs that pour down the mountain in warm waterfalls between the rocks, visited for relaxation and wellness.',
+ about:["Ma'in's hot water rises from deep underground in a steep valley near Madaba. It is known for its minerals and for use in relaxation and natural therapy.",'Facilities, prices and exact coordinates will be added once verified.'],
+ explore:[['The hot waterfalls','Warm water runs down the rocks, and the temperature differs from one spring to the next.'],["Wadi Zarqa Ma'in",'A deep valley framed by rocky slopes.'],['The road to the Dead Sea','Easy to combine with a Dead Sea visit in one day.']],
+ season:'Autumn, winter and spring',dur:'Half a day'},
+'pink-lake':{gov:'To be added',near:'Eastern shore of the Dead Sea',
+ intro:'A colored lake near the eastern Dead Sea shore, tinted pink, mentioned in local shore and salt-beach tours.',
+ about:['This page is in progress. The lake position on the map is approximate and will be updated once exact coordinates are confirmed.','The look of lakes like this can change with the season and conditions, so details will be added after verification.'],
+ explore:[['The lake color','Leans pink, and may vary by season.'],['The salt beach','Mentioned in local tours as part of the same visit.'],['The Dead Sea','The lowest point on land, close by.']],
+ season:'To be added',dur:'To be added'}
 };
 
 /* Geographic data. All coordinates are [latitude, longitude].
@@ -336,6 +360,15 @@ function haversine(a,b){
 /* UI strings. Arabic is the primary language. Edit here. */
 const S={
 ar:{
+ nav_trip:'رحلتي',cont_guest:'المتابعة بدون حساب',no_acct:'ليس لديك حساب؟',create_acct:'أنشئ حسابًا',have_acct:'لديك حساب؟',acct_page:'حسابي',acct_in:'أنت مسجّل الدخول باسم {n}.',nav_logout:'تسجيل الخروج',trip_page:'ATHAR | رحلتي',f_purpose:'الغرض من الزيارة',
+ trip_add:'أضف لرحلتي',trip_in:'في رحلتك ✓',trip_sub:'الأماكن التي اخترتها. رتّبها ثم افتحها كمسار في خرائط جوجل.',
+ trip_empty:'لم تضف أي مكان بعد. افتح أي معلم واضغط «أضف لرحلتي».',trip_rm:'إزالة',trip_up:'نقل للأعلى',trip_dn:'نقل للأسفل',
+ trip_open:'افتح المسار في خرائط جوجل',trip_total:'المسافة بخط مستقيم بين المحطات: نحو {k} كم',trip_hint:'سجّل الدخول لحفظ رحلتك على حسابك.',
+ comm_h:'من زوّار المكان',comm_off:'التعليقات والصور تحتاج ربط قاعدة البيانات، وهي غير مفعّلة في هذه النسخة.',comm_login:'سجّل الدخول للمشاركة',comm_load_err:'تعذّر تحميل مشاركات الزوّار الآن.',
+ ph_h:'صور الزوّار',ph_none:'لا توجد صور بعد. كن أول من يشارك.',ph_add:'ارفع الصورة',ph_cap:'وصف قصير (اختياري)',ph_ok:'وصلتنا صورتك وستظهر بعد المراجعة.',ph_err:'تعذّر رفع الصورة. الحد الأقصى 5 ميغابايت (JPG أو PNG أو WebP).',
+ cm_h:'التعليقات',cm_none:'لا توجد تعليقات بعد.',cm_ph:'شاركنا تجربتك في هذا المكان',cm_send:'أرسل التعليق',cm_ok:'وصلنا تعليقك وسيظهر بعد المراجعة.',cm_err:'تعذّر إرسال التعليق. حاول مرة أخرى.',pending:'بانتظار المراجعة',
+ signup_title:'إنشاء حساب',signup_btn:'إنشاء الحساب',to_signup:'ليس لديك حساب؟ أنشئ حسابًا',to_login:'لديك حساب؟ سجّل الدخول',a_name:'الاسم الظاهر',
+ err_len:'كلمة المرور 6 أحرف على الأقل.',auth_confirm:'أرسلنا رابط تأكيد إلى بريدك. افتحه ثم سجّل الدخول.',auth_bad:'البريد أو كلمة المرور غير صحيحة.',auth_fail:'تعذّر إكمال الطلب. حاول مرة أخرى.',
  gate_t:'اختر لغة التصفح',gate_s:'Choose your language',gate_note:'يمكنك تغيير اللغة لاحقًا من القائمة الجانبية.',
  nav_home:'الرئيسية',nav_about:'من نحن',nav_login:'تسجيل الدخول',lang_btn:'English',lang_title:'Switch to English',
  collapse:'طيّ القائمة',expand:'توسيع القائمة',menu_open:'فتح القائمة',menu_close:'إغلاق القائمة',side_aria:'القائمة الرئيسية',
@@ -374,6 +407,15 @@ ar:{
  loc_err:'تعذّر تحديد موقعك. تأكد من تفعيل إذن الموقع في المتصفح.',loc_you:'موقعك الحالي'
 },
 en:{
+ nav_trip:'My trip',cont_guest:'Continue without an account',no_acct:'No account yet?',create_acct:'Create an account',have_acct:'Already have an account?',acct_page:'My account',acct_in:'You are logged in as {n}.',nav_logout:'Log out',trip_page:'ATHAR | My trip',f_purpose:'Purpose of visit',
+ trip_add:'Add to my trip',trip_in:'In your trip ✓',trip_sub:'The places you picked. Put them in order, then open them as a route in Google Maps.',
+ trip_empty:'No places yet. Open any landmark and press Add to my trip.',trip_rm:'Remove',trip_up:'Move up',trip_dn:'Move down',
+ trip_open:'Open the route in Google Maps',trip_total:'Straight-line distance between stops: about {k} km',trip_hint:'Log in to save your trip to your account.',
+ comm_h:'From visitors',comm_off:'Comments and photos need the database to be connected, and it is not enabled in this version.',comm_login:'Log in to share',comm_load_err:'Visitor contributions could not be loaded right now.',
+ ph_h:'Visitor photos',ph_none:'No photos yet. Be the first to share one.',ph_add:'Upload photo',ph_cap:'Short caption (optional)',ph_ok:'We received your photo. It will appear after review.',ph_err:'The photo could not be uploaded. Maximum 5 MB (JPG, PNG or WebP).',
+ cm_h:'Comments',cm_none:'No comments yet.',cm_ph:'Share your experience of this place',cm_send:'Post comment',cm_ok:'We received your comment. It will appear after review.',cm_err:'The comment could not be sent. Please try again.',pending:'Awaiting review',
+ signup_title:'Create account',signup_btn:'Create account',to_signup:'No account? Create one',to_login:'Have an account? Log in',a_name:'Display name',
+ err_len:'Password must be at least 6 characters.',auth_confirm:'We sent a confirmation link to your email. Open it, then log in.',auth_bad:'Wrong email or password.',auth_fail:'The request could not be completed. Please try again.',
  gate_t:'Choose your language',gate_s:'اختر لغة التصفح',gate_note:'You can change the language later from the side menu.',
  nav_home:'Home',nav_about:'About us',nav_login:'Log in',lang_btn:'العربية',lang_title:'التبديل إلى العربية',
  collapse:'Collapse menu',expand:'Expand menu',menu_open:'Open menu',menu_close:'Close menu',side_aria:'Main menu',
@@ -420,6 +462,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const LOGO='athar-logo.jpg';
 const ICON={
+ trip:'<svg viewBox="0 0 24 24"><path d="M6 20a2 2 0 100-4 2 2 0 000 4zM18 8a2 2 0 100-4 2 2 0 000 4zM8 18h6a3 3 0 000-6h-4a3 3 0 010-6h6"/></svg>',
  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10"/></svg>',
  info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
  user:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>',
@@ -437,7 +480,8 @@ const CI={ /* category glyphs, 24x24 */
  castle:'<svg viewBox="0 0 24 24"><path d="M4 20V8h3v2h3V8h4v2h3V8h3v12zM10 20v-5h4v5"/></svg>',
  reserve:'<svg viewBox="0 0 24 24"><path d="M12 3l6 9h-4l5 7H5l5-7H6zM12 19v3"/></svg>',
  nature:'<svg viewBox="0 0 24 24"><path d="M2 19l7-12 4 7 3-4 6 9zM16 6.5a1.5 1.5 0 110 .01"/></svg>',
- cultural:'<svg viewBox="0 0 24 24"><path d="M5 20v-8a7 7 0 0114 0v8M12 3V1M9 20v-5a3 3 0 016 0v5M3 20h18"/></svg>'
+ cultural:'<svg viewBox="0 0 24 24"><path d="M5 20v-8a7 7 0 0114 0v8M12 3V1M9 20v-5a3 3 0 016 0v5M3 20h18"/></svg>',
+ viewpoint:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/></svg>'
 };
 
 /* ---------- generative placeholder art (photo slots) ---------- */
@@ -481,6 +525,11 @@ const nm=d=>LANG==='ar'?d.ar:d.en, sub=d=>LANG==='ar'?d.en:d.ar, subCls=()=>LANG
 const DT=d=>LANG==='ar'?d:Object.assign({},d,EN[d.id]);
 const num=n=>LANG==='ar'?AR(n):String(n);
 const cat=k=>CATS[k][LANG], reg=k=>REGIONS[k][LANG];
+const purp=k=>PURPOSES[k][LANG];
+const CLOUD=window.AtharCloud;
+let TRIP=[];
+const inTrip=id=>TRIP.includes(id);
+const tripLabel=id=>t(inTrip(id)?'trip_in':'trip_add');
 const lbl=s=>LANG==='en'?(LBL_EN[s]||s):s;
 
 /* ---------- photos: put a file named <id>.jpg in the photos/ folder (e.g. photos/petra.jpg). If missing, the illustration shows. ---------- */
@@ -505,12 +554,13 @@ function viewDest(id){
   return `<div class="page"><header class="d-hero"><div class="d-head">${crumbs([[t('crumb_home'),'#map'],[reg(d.region),'#map'],[nm(d)]])}
 <div style="display:grid;gap:14px"><div class="chap"><b class="en">${String(d.n).padStart(2,'0')} / ${DEST.length}</b><span>${cat(d.cat)} · ${reg(d.region)}</span></div>
 <h1 class="d-title">${esc(nm(d))}</h1><div class="d-en ${LANG==='ar'?'':'ar-s'}">${esc(sub(d))}</div><p class="d-intro">${esc(d.intro)}</p></div>
-<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a></div></div>
+<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a><button type="button" class="btn btn-ghost" data-trip="${d.id}">${tripLabel(d.id)}</button></div></div>
 <div class="d-art">${art(d.art,d.n,LANG==='ar'?'رسم توضيحي — موضع صورة الموقع':'Placeholder illustration — site photo goes here')}${photoImg(d)}</div></header>
 <main class="grow"><div class="wrap d-body"><section class="d-about"><h2 class="sec">${t('about_h')}</h2>${d.about.map(p=>`<p>${esc(p)}</p>`).join('')}</section>
 <aside class="d-facts"><h2 class="sec">${t('visit_h')}</h2><dl class="facts">
 <div><dt>${t('f_loc')}</dt><dd>${esc(d.gov)}, ${esc(d.near)}</dd></div>
 <div><dt>${t('f_cat')}</dt><dd>${cat(d.cat)}${LANG==='ar'?` <span class="en">(${CATS[d.cat].en})</span>`:''}</dd></div>
+<div><dt>${t('f_purpose')}</dt><dd>${purp(d.purpose)}</dd></div>
 <div><dt>${t('f_coord')}</dt><dd class="en" style="text-align:start">${cx(d.ll)}${d.approx?` <span class="todo">${t('approx')}</span>`:''}</dd></div>
 <div><dt>${t('f_season')}</dt><dd>${esc(d.season)}</dd></div>
 <div><dt>${t('f_dur')}</dt><dd>${esc(d.dur)}</dd></div>
@@ -518,6 +568,7 @@ function viewDest(id){
 <div><dt>${t('f_fee')}</dt><dd class="todo">${t('todo')}</dd></div></dl>
 <div class="locator">${locator(d)}<small>${t('loc_cap',{n:esc(nm(d))})}</small></div></aside></div>
 <section class="d-explore" id="explore-${d.id}"><div class="wrap"><h2 class="sec">${t('explore_h')}</h2><div class="ex-grid">${d.explore.map(e=>`<article class="ex"><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></article>`).join('')}</div></div></section>
+<section class="d-community"><div class="wrap"><h2 class="sec">${t('comm_h')}</h2><div id="community-body" data-place="${d.id}"></div></div></section>
 <section class="d-related"><div class="wrap"><h2 class="sec">${t('related_h')}</h2><div class="rel-grid">${rel.map(({o,km})=>`<a class="rel" href="#d-${o.id}"><div class="rel-art">${art(o.art,o.n)}</div><div class="rel-t"><b>${esc(nm(o))}</b><span class="${subCls()}">${esc(sub(o))}</span><small>${cat(o.cat)} · ${t('away',{k:num(Math.round(km))})}</small></div></a>`).join('')}</div>
 <div style="margin-top:34px"><a class="btn btn-ghost" href="#map">${ICON.arrow}${t('back')}</a></div></div></section></main>${footer()}</div>`;
 }
@@ -535,7 +586,8 @@ let shell,stage,mapObj=null,mapEl=null,selId=null,markers={};
 const $id=i=>document.getElementById(i);
 function setNav(k){document.querySelectorAll('[data-nav]').forEach(a=>{const on=a.dataset.nav===k;a.classList.toggle('active',on);on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')})}
 function closeDrawer(){shell&&shell.classList.remove('open')}
-function openLogin(){closeDrawer();$id('modal').hidden=false;$id('fmsg').textContent='';setTimeout(()=>$id('em').focus(),20)}
+let RET='#map';
+function openLogin(){closeDrawer();showLogin()}
 function closeLogin(){$id('modal').hidden=true}
 function toggleHelp(f){const hp=$id('help'),hb=$id('help-btn');const on=typeof f==='boolean'?f:hp.hidden;hp.hidden=!on;hb.setAttribute('aria-expanded',String(on));if(on)$id('help-x').focus()}
 
@@ -544,33 +596,23 @@ function mount(){
   root.innerHTML=`<div class="shell${collapsed?' collapsed':''}" id="shell"><div class="scrim" id="scrim"></div>
 <aside class="side" id="side" aria-label="${t('side_aria')}"><button class="drawer-close" id="dclose" aria-label="${t('menu_close')}">${ICON.x}</button>
 <div class="logo-box"><img src="${LOGO}" alt="${t('logo_alt')}" width="1154" height="912"></div>
-<nav class="side-nav"><a class="nav-item" data-nav="map" href="#map" title="${t('nav_home')}">${ICON.home}<span>${t('nav_home')}</span></a><a class="nav-item" data-nav="about" href="#about" title="${t('nav_about')}">${ICON.info}<span>${t('nav_about')}</span></a><button type="button" class="nav-item" id="login-open" title="${t('nav_login')}">${ICON.user}<span>${t('nav_login')}</span></button><button type="button" class="nav-item" id="lang-sw" title="${t('lang_title')}">${ICON.globe}<span>${t('lang_btn')}</span></button></nav>
+<nav class="side-nav"><a class="nav-item" data-nav="map" href="#map" title="${t('nav_home')}">${ICON.home}<span>${t('nav_home')}</span></a><a class="nav-item" data-nav="about" href="#about" title="${t('nav_about')}">${ICON.info}<span>${t('nav_about')}</span></a><a class="nav-item" data-nav="trip" href="#trip" title="${t('nav_trip')}">${ICON.trip}<span>${t('nav_trip')}</span></a><button type="button" class="nav-item" id="login-open" title="${t('nav_login')}">${ICON.user}<span>${t('nav_login')}</span></button><button type="button" class="nav-item" id="lang-sw" title="${t('lang_title')}">${ICON.globe}<span>${t('lang_btn')}</span></button></nav>
 <div class="side-foot"><button type="button" class="collapse-btn" id="collapse" aria-expanded="${!collapsed}" aria-label="${collapsed?t('expand'):t('collapse')}">${ICON.chev}<span>${t('collapse')}</span></button></div></aside>
 <button class="menu-btn" id="menu" aria-label="${t('menu_open')}">${ICON.menu}</button>
 <div class="stage is-map" id="stage"></div></div>
 <button class="help-btn" id="help-btn" aria-label="${t('help')}" aria-expanded="false" aria-controls="help">?</button>
 <section class="help-panel" id="help" role="dialog" aria-label="${t('help_title')}" hidden><button class="help-x" id="help-x" aria-label="${t('help_close')}">${ICON.x}</button><h2>${t('help_title')}</h2><ol class="help-steps">
 ${[1,2,3,4].map(i=>`<li><div><b>${t('h'+i+'t')}</b>${t('h'+i)}</div></li>`).join('')}</ol></section>
-<div class="modal" id="modal" hidden><form class="modal-card" id="login" role="dialog" aria-modal="true" aria-labelledby="lt" novalidate><button type="button" class="help-x" id="login-x" aria-label="${t('close')}">${ICON.x}</button>
-<h2 id="lt">${t('login_title')}</h2><p class="sub">${t('login_sub')}</p>
-<div class="field"><label for="em">${t('email')}</label><input id="em" type="email" autocomplete="email" placeholder="name@example.com"></div>
-<div class="field"><label for="pw">${t('password')}</label><input id="pw" type="password" autocomplete="current-password"></div>
-<div class="form-msg" id="fmsg" role="status"></div>
-<button class="btn btn-gold btn-block" type="submit">${t('login_btn')}</button>
-<button class="btn btn-block" type="button" id="login-back" style="margin-top:10px;background:transparent;border-color:var(--bronze);color:var(--paper)">${t('cont')}</button></form></div>`;
+`;
   shell=$id('shell');stage=$id('stage');mapObj=null;mapEl=null;markers={};selId=null;
   $id('menu').onclick=()=>shell.classList.add('open');
   $id('scrim').onclick=closeDrawer;$id('dclose').onclick=closeDrawer;
   $id('collapse').onclick=()=>{const c=shell.classList.toggle('collapsed');$id('collapse').setAttribute('aria-expanded',String(!c));$id('collapse').setAttribute('aria-label',c?t('expand'):t('collapse'));setTimeout(()=>{mapObj&&mapObj.invalidateSize()},320)};
   $id('help-btn').onclick=()=>toggleHelp();$id('help-x').onclick=()=>{toggleHelp(false);$id('help-btn').focus()};
-  $id('login-open').onclick=openLogin;$id('login-x').onclick=closeLogin;$id('login-back').onclick=closeLogin;
+  $id('login-open').onclick=()=>{if(CLOUD.user)CLOUD.signOut();else openLogin()};
   $id('lang-sw').onclick=()=>setLang(LANG==='ar'?'en':'ar');
-  $id('modal').addEventListener('mousedown',e=>{if(e.target.id==='modal')closeLogin()});
-  $id('login').addEventListener('submit',e=>{e.preventDefault();const em=$id('em').value.trim(),pw=$id('pw').value;
-    if(!/^\S+@\S+\.\S+$/.test(em)){$id('fmsg').textContent=t('err_email');$id('em').focus();return}
-    if(!pw){$id('fmsg').textContent=t('err_pw');$id('pw').focus();return}
-    $id('fmsg').textContent=t('demo')});
   document.querySelectorAll('.side a').forEach(a=>a.addEventListener('click',closeDrawer));
+  refreshAuthUI();
 }
 
 function route(){
@@ -579,8 +621,10 @@ function route(){
   if(h.startsWith('explore-'))return;
   if(h.startsWith('d-')){
     const d=DEST.find(x=>x.id===h.slice(2));
-    if(d){showPage(viewDest(d.id));setNav('map');document.title='ATHAR | '+nm(d);return}
+    if(d){showPage(viewDest(d.id));loadCommunity(d.id);setNav('map');document.title='ATHAR | '+nm(d);return}
   }
+  if(h==='signup'){showPage(viewSignup());bindSignup();setNav('');document.title='ATHAR | '+t('signup_title');return}
+  if(h==='trip'){showPage(viewTrip());setNav('trip');document.title=t('trip_page');return}
   if(h==='about'){showPage(viewAbout());setNav('about');document.title=t('title_about');return}
   showMap();setNav('map');document.title=t('title_home');
 }
@@ -605,6 +649,103 @@ function initScrollReveal(container){
   targets.forEach(el => obs.observe(el));
 }
 
+function viewSignup(){
+  const head=`<div class="page"><header class="wrap a-hero">${crumbs([[t('crumb_home'),'#map'],[t('signup_title')]])}<h1>${t('signup_title')}</h1><p class="lead">${t('login_sub')}</p></header><main class="grow"><div class="wrap acct">`;
+  const foot=`</div></main>${footer()}</div>`;
+  if(CLOUD.user)return head+`<div class="acct-card"><p>${t('acct_in',{n:esc(CLOUD.name())})}</p><div class="trip-acts"><a class="btn" href="#trip">${t('nav_trip')}</a><button type="button" class="btn btn-ghost" id="acct-out">${t('nav_logout')}</button></div></div>`+foot;
+  const fld=(id,lab,type,ac,extra)=>`<div class="field"><label for="${id}">${lab}</label><input id="${id}" type="${type}" autocomplete="${ac}" ${extra||''}></div>`;
+  return head+`<form class="acct-card" id="sf" novalidate>${fld('nm2',t('a_name'),'text','nickname','maxlength="40"')}${fld('em2',t('email'),'email','email','placeholder="name@example.com"')}${fld('pw2',t('password'),'password','new-password')}<div class="form-msg" id="smsg" role="status"></div><button class="btn btn-block" type="submit">${t('signup_btn')}</button><p class="auth-alt2">${t('have_acct')} <a href="#" id="s-login">${t('login_btn')}</a></p></form>`+foot;
+}
+function bindSignup(){
+  const out=$id('acct-out');if(out)out.onclick=()=>CLOUD.signOut();
+  const sl=$id('s-login');if(sl)sl.onclick=e=>{e.preventDefault();showLogin()};
+  const sf=$id('sf');if(!sf)return;
+  sf.onsubmit=async e=>{e.preventDefault();const em=$id('em2').value.trim(),pw=$id('pw2').value,msg=$id('smsg');
+    if(!/^\S+@\S+\.\S+$/.test(em)){msg.textContent=t('err_email');return}
+    if(!pw){msg.textContent=t('err_pw');return}
+    if(!CLOUD.ready){msg.textContent=t('demo');return}
+    if(pw.length<6){msg.textContent=t('err_len');return}
+    msg.textContent='…';
+    try{const r=await CLOUD.signUp(em,pw,$id('nm2').value.trim());if(r.error)msg.textContent=t('auth_fail');else if(r.needsConfirm)msg.textContent=t('auth_confirm');else{const x=RET;RET='#map';location.hash=(x==='#signup'?'#map':x)}}catch(x){msg.textContent=t('auth_fail')}};
+}
+let AUTH_READY=false;
+function maybeLogin(){
+  if(!AUTH_READY||document.querySelector('.gate'))return;
+  if(CLOUD.user||(location.hash||'')==='#signup')return;
+  try{if(sessionStorage.getItem('athar-auth-seen'))return}catch(e){}
+  showLogin();
+}
+function showLogin(){
+  if(document.querySelector('.gate.auth'))return;
+  try{sessionStorage.setItem('athar-auth-seen','1')}catch(e){}
+  const g=document.createElement('div');g.className='gate auth';g.setAttribute('role','dialog');g.setAttribute('aria-modal','true');g.setAttribute('aria-labelledby','at');
+  g.innerHTML=`<div class="gate-in"><div class="logo-box"><img src="${LOGO}" alt="${t('logo_alt')}" width="1154" height="912"></div>
+<h1 id="at" class="gate-t">${t('login_title')}</h1>
+<form class="auth-form" id="af" novalidate>
+<div class="field"><label for="a-em">${t('email')}</label><input id="a-em" type="email" autocomplete="email" placeholder="name@example.com"></div>
+<div class="field"><label for="a-pw">${t('password')}</label><input id="a-pw" type="password" autocomplete="current-password"></div>
+<div class="form-msg" id="amsg" role="status"></div>
+<button class="btn btn-gold btn-block" type="submit">${t('login_btn')}</button>
+<button type="button" class="btn btn-ghost-light btn-block" id="a-skip">${t('cont_guest')}</button></form>
+<p class="auth-alt">${t('no_acct')} <a href="#signup" id="a-signup">${t('create_acct')}</a></p></div>`;
+  document.body.appendChild(g);
+  const close=()=>g.remove();
+  $id('a-skip').onclick=close;
+  g.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+  $id('a-signup').onclick=e=>{e.preventDefault();const h=location.hash;RET=(h&&h!=='#signup')?h:'#map';close();location.hash='#signup'};
+  $id('af').onsubmit=async e=>{e.preventDefault();const em=$id('a-em').value.trim(),pw=$id('a-pw').value,msg=$id('amsg');
+    if(!/^\S+@\S+\.\S+$/.test(em)){msg.textContent=t('err_email');$id('a-em').focus();return}
+    if(!pw){msg.textContent=t('err_pw');$id('a-pw').focus();return}
+    if(!CLOUD.ready){msg.textContent=t('demo');return}
+    msg.textContent='…';
+    try{const err=await CLOUD.signIn(em,pw);if(err)msg.textContent=t('auth_bad');else close()}catch(x){msg.textContent=t('auth_fail')}};
+  $id('a-em').focus();
+}
+function viewTrip(){
+  const items=TRIP.map(id=>DEST.find(x=>x.id===id)).filter(Boolean);
+  let km=0;for(let i=1;i<items.length;i++)km+=haversine(items[i-1].ll,items[i].ll);
+  const ll=d=>d.ll[0]+','+d.ll[1];
+  const url=items.length>1?'https://www.google.com/maps/dir/?api=1&origin='+ll(items[0])+'&destination='+ll(items[items.length-1])+(items.length>2?'&waypoints='+items.slice(1,-1).map(ll).join('%7C'):'')+'&travelmode=driving':items.length?'https://www.google.com/maps/search/?api=1&query='+ll(items[0]):'';
+  return `<div class="page"><header class="wrap a-hero">${crumbs([[t('crumb_home'),'#map'],[t('nav_trip')]])}
+<h1>${t('nav_trip')}</h1><p class="lead">${t('trip_sub')}</p></header>
+<main class="grow"><div class="wrap trip">${items.length?`<ol class="trip-list">${items.map((d,i)=>`<li><span class="trip-n">${num(i+1)}</span><a href="#d-${d.id}"><b>${esc(nm(d))}</b><small>${cat(d.cat)} · ${purp(d.purpose)}</small></a><button type="button" class="trip-btn" data-trip-mv="${d.id}:up" aria-label="${t('trip_up')}">↑</button><button type="button" class="trip-btn" data-trip-mv="${d.id}:dn" aria-label="${t('trip_dn')}">↓</button><button type="button" class="trip-btn" data-trip-rm="${d.id}">${t('trip_rm')}</button></li>`).join('')}</ol>
+<div class="trip-acts"><a class="btn" href="${url}" target="_blank" rel="noopener">${t('trip_open')}</a>${items.length>1?`<span>${t('trip_total',{k:num(Math.round(km))})}</span>`:''}</div>
+${CLOUD.ready&&!CLOUD.user?`<p class="comm-note">${t('trip_hint')}</p>`:''}`:`<p class="comm-note">${t('trip_empty')}</p>`}</div></main>${footer()}</div>`;
+}
+function syncTripBtns(){document.querySelectorAll('[data-trip]').forEach(b=>{const id=b.dataset.trip;b.textContent=tripLabel(id);b.classList.toggle('on',inTrip(id))})}
+async function tripToggle(id){TRIP=inTrip(id)?TRIP.filter(x=>x!==id):TRIP.concat(id);syncTripBtns();try{await CLOUD.saveTrip(TRIP)}catch(e){}}
+async function tripLoad(){try{TRIP=await CLOUD.getTrip()}catch(e){}syncTripBtns();if((location.hash||'')==='#trip')route()}
+function refreshAuthUI(){const b=$id('login-open');if(!b)return;const lab=CLOUD.user?t('nav_logout'):t('nav_login');const sp=b.querySelector('span');if(sp)sp.textContent=lab;b.title=lab}
+async function loadCommunity(id){
+  const box=$id('community-body');if(!box)return;
+  if(!CLOUD.ready){box.innerHTML=`<p class="comm-note">${t('comm_off')}</p>`;return}
+  let ph=[],cm=[];
+  try{[ph,cm]=await Promise.all([CLOUD.photos(id),CLOUD.comments(id)])}catch(e){box.innerHTML=`<p class="comm-note">${t('comm_load_err')}</p>`;return}
+  const cur=$id('community-body');if(!cur||cur.dataset.place!==id)return;
+  const me=CLOUD.user,base=DEST.find(x=>x.id===id);
+  const fmt=v=>new Date(v).toLocaleDateString(LANG==='ar'?'ar-JO':'en-GB');
+  cur.innerHTML=`<h3 class="cm-h">${t('ph_h')}</h3>
+${ph.length?`<div class="cm-photos">${ph.map(p=>`<figure><img src="${esc(p.url)}" alt="${esc(p.caption||nm(base))}" loading="lazy"><figcaption>${esc(p.caption||'')}<small>${esc(p.author_name)}${p.approved?'':' · '+t('pending')}</small></figcaption></figure>`).join('')}</div>`:`<p class="comm-note">${t('ph_none')}</p>`}
+${me?`<form class="comm-form" id="ph-form"><input type="file" id="ph-file" accept="image/jpeg,image/png,image/webp" required><input type="text" id="ph-cap" maxlength="120" placeholder="${t('ph_cap')}"><button class="btn" type="submit">${t('ph_add')}</button><div class="form-msg" id="ph-msg" role="status"></div></form>`:''}
+<h3 class="cm-h">${t('cm_h')}</h3>
+${cm.length?`<ul class="cm-list">${cm.map(c=>`<li><b>${esc(c.author_name)}</b><small>${fmt(c.created_at)}${c.approved?'':' · '+t('pending')}</small><p>${esc(c.body)}</p></li>`).join('')}</ul>`:`<p class="comm-note">${t('cm_none')}</p>`}
+${me?`<form class="comm-form" id="cm-form"><textarea id="cm-body" rows="3" maxlength="1000" required placeholder="${t('cm_ph')}"></textarea><button class="btn" type="submit">${t('cm_send')}</button><div class="form-msg" id="cm-msg" role="status"></div></form>`:`<p><button type="button" class="btn btn-ghost" data-login>${t('comm_login')}</button></p>`}`;
+  cur.querySelectorAll('[data-login]').forEach(b=>b.onclick=openLogin);
+  const pf=$id('ph-form');
+  if(pf)pf.onsubmit=async e=>{e.preventDefault();const f=$id('ph-file').files[0];if(!f)return;const m=$id('ph-msg');m.textContent='…';
+    try{await CLOUD.addPhoto(id,f,$id('ph-cap').value.trim());await loadCommunity(id);const m2=$id('ph-msg');if(m2)m2.textContent=t('ph_ok')}catch(err){m.textContent=t('ph_err')}};
+  const cf=$id('cm-form');
+  if(cf)cf.onsubmit=async e=>{e.preventDefault();const v=$id('cm-body').value.trim();if(!v)return;const m=$id('cm-msg');m.textContent='…';
+    try{await CLOUD.addComment(id,v);await loadCommunity(id);const m2=$id('cm-msg');if(m2)m2.textContent=t('cm_ok')}catch(err){m.textContent=t('cm_err')}};
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-trip]');if(b){e.preventDefault();tripToggle(b.dataset.trip);return}
+  const r=e.target.closest&&e.target.closest('[data-trip-rm]');
+  if(r){TRIP=TRIP.filter(x=>x!==r.dataset.tripRm);CLOUD.saveTrip(TRIP).catch(()=>{});route();return}
+  const m=e.target.closest&&e.target.closest('[data-trip-mv]');
+  if(m){const [id,dir]=m.dataset.tripMv.split(':');const i=TRIP.indexOf(id),j=i+(dir==='up'?-1:1);
+    if(i>-1&&j>=0&&j<TRIP.length){[TRIP[i],TRIP[j]]=[TRIP[j],TRIP[i]];CLOUD.saveTrip(TRIP).catch(()=>{});route()}}
+});
 function showPage(html){
   if(mapEl)mapEl.style.display='none';
   stage.classList.remove('is-map');
@@ -621,7 +762,8 @@ function showMap(){
 }
 function buildMap(){
   mapEl=document.createElement('div');mapEl.className='view-map';
-  const catChips = Object.keys(CATS).map(k=>`<button type="button" class="chip" data-cat="${k}">${cat(k)}</button>`).join('');
+  const purpChips=Object.keys(PURPOSES).map(k=>`<button type="button" class="chip chip-p" data-purpose="${k}">${purp(k)}</button>`).join('');
+  const catChips = usedCats().map(k=>`<button type="button" class="chip" data-cat="${k}">${cat(k)}</button>`).join('');
   mapEl.innerHTML=`<div id="map" role="region" aria-label="${t('map_aria')}"></div>
 <div class="mc mc-tl"><button type="button" id="zin" aria-label="${t('zin')}">${ICON.plus}</button><button type="button" id="zout" aria-label="${t('zout')}">${ICON.minus}</button><button type="button" id="zhome" aria-label="${t('zhome')}">${ICON.full}</button></div>
 
@@ -637,7 +779,7 @@ function buildMap(){
 
   <div class="chips" role="group" aria-label="${t('legend')}">
     <button type="button" class="chip on" data-cat="all">${t('filter_all')}</button>
-    ${catChips}
+    ${catChips}${purpChips}
   </div>
 
   <div class="hud-tools">
@@ -660,7 +802,7 @@ function buildMap(){
 </div>
 
 <div class="plate"><b>${t('plate_b')}</b><span class="${LANG==='ar'?'en':'ar-s'}">${t('plate_s')}</span></div>
-<div class="legend"><h3>${t('legend')}</h3><ul>${Object.keys(CATS).map(k=>`<li><span class="lg-d"><i></i></span>${cat(k)}</li>`).join('')}</ul><div class="scale"><span class="scale-bar" id="sbar"></span><span id="slab"></span></div></div>
+<div class="legend"><h3>${t('legend')}</h3><ul>${usedCats().map(k=>`<li><span class="lg-d"><i></i></span>${cat(k)}</li>`).join('')}</ul><div class="scale"><span class="scale-bar" id="sbar"></span><span id="slab"></span></div></div>
 <svg class="compass" id="map-compass" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="rgba(246,239,220,.88)" stroke="#8b6220"/><path d="M32 8l7 24-7-4-7 4z" fill="#720e07"/><path d="M32 56l-7-24 7 4 7-4z" fill="#8b6220" opacity=".5"/><text x="32" y="7" text-anchor="middle" font-size="9" fill="#45050c" font-family="Times New Roman">N</text></svg>
 
 <aside class="place-drawer" id="place-drawer" aria-hidden="true">
@@ -679,6 +821,7 @@ function buildMap(){
     <div class="pd-acts">
       <a class="btn" id="pd-more" href="#">${t('drawer_more')}</a>
       <a class="btn btn-ghost" id="pd-dir" href="#" target="_blank" rel="noopener">${t('drawer_dir')}</a>
+      <button type="button" class="btn btn-ghost" id="pd-trip" data-trip="">${t('trip_add')}</button>
     </div>
   </div>
 </aside>`;
@@ -798,6 +941,7 @@ function buildMap(){
     $id('pd-meta').innerHTML = `<span class="pd-tag">${reg(d.region)}</span><span class="pd-tag">${esc(d.gov)}</span><span class="pd-tag">${esc(d.season)}</span><span class="pd-tag">${esc(d.dur)}</span>`;
     $id('pd-more').href = '#d-' + d.id;
     $id('pd-dir').href = `https://www.google.com/maps/dir/?api=1&destination=${d.ll[0]},${d.ll[1]}`;
+    $id('pd-trip').dataset.trip = d.id; syncTripBtns();
     updateDrawerDistance(d);
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
@@ -836,20 +980,11 @@ function buildMap(){
   });
   M.on('click', closePlaceDrawer);
 
-  /* Category Filter Chips */
-  mapEl.querySelectorAll('.chip[data-cat]').forEach(btn => {
-    btn.onclick = () => {
-      mapEl.querySelectorAll('.chip[data-cat]').forEach(c => c.classList.remove('on'));
-      btn.classList.add('on');
-      const chosen = btn.dataset.cat;
-      Object.values(markers).forEach(({ el, data }) => {
-        const node = el();
-        if(!node) return;
-        const show = chosen === 'all' || data.cat === chosen;
-        node.classList.toggle('is-hidden', !show);
-      });
-    };
-  });
+  /* Category + purpose filters */
+  let fCat='all',fPur='all';
+  const applyFilters=()=>{Object.values(markers).forEach(({el,data})=>{const node=el();if(!node)return;node.classList.toggle('is-hidden',!((fCat==='all'||data.cat===fCat)&&(fPur==='all'||data.purpose===fPur)))})};
+  mapEl.querySelectorAll('.chip[data-cat]').forEach(btn=>{btn.onclick=()=>{mapEl.querySelectorAll('.chip[data-cat]').forEach(c=>c.classList.remove('on'));btn.classList.add('on');fCat=btn.dataset.cat;applyFilters()}});
+  mapEl.querySelectorAll('.chip[data-purpose]').forEach(btn=>{btn.onclick=()=>{const on=!btn.classList.contains('on');mapEl.querySelectorAll('.chip[data-purpose]').forEach(c=>c.classList.remove('on'));btn.classList.toggle('on',on);fPur=on?btn.dataset.purpose:'all';applyFilters()}});
 
   /* Smart Search with Instant Autocomplete */
   const sInput = $id('map-search'), sDrop = $id('search-drop'), sClear = $id('search-clear');
@@ -946,7 +1081,7 @@ function showGate(){
 <div class="gate-btns"><button type="button" class="btn btn-gold" id="g-ar" lang="ar">العربية</button><button type="button" class="btn btn-ghost-light" id="g-en" lang="en">English</button></div>
 <p class="gate-note" lang="ar" dir="rtl">يمكنك تغيير اللغة لاحقًا من القائمة الجانبية.</p></div>`;
   document.body.appendChild(g);
-  const pick=l=>{g.remove();setLang(l)};
+  const pick=l=>{g.remove();setLang(l);maybeLogin()};
   $id('g-ar').onclick=()=>pick('ar');$id('g-en').onclick=()=>pick('en');
   $id('g-ar').focus();
 }
@@ -955,5 +1090,7 @@ document.addEventListener('keydown',e=>{if(e.key!=='Escape')return;const m=$id('
 window.addEventListener('hashchange',()=>{if(stage)route()});
 window.addEventListener('resize',()=>{if(mapObj&&mapEl&&mapEl.style.display!=='none')mapObj.invalidateSize()});
 applyLangAttrs();mount();route();
+CLOUD.onAuth(()=>{refreshAuthUI();tripLoad();if((location.hash||'')==='#signup')route();const cb=$id('community-body');if(cb)loadCommunity(cb.dataset.place)});
+CLOUD.init().then(()=>{AUTH_READY=true;refreshAuthUI();tripLoad();maybeLogin()}).catch(()=>{AUTH_READY=true;maybeLogin()});
 if(!CHOSEN)showGate();
 })();
