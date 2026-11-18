@@ -14,6 +14,8 @@ const CATS = {
 };
 const PURPOSES={tourism:{ar:'سياحي',en:'Sightseeing'},wellness:{ar:'علاجي',en:'Wellness & therapeutic'}};
 const WELLNESS=new Set(['dead-sea','himma','maein']);
+const curSeason=()=>{const m=new Date().getMonth()+1;return m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':m>=9&&m<=11?'autumn':'winter'};
+const seasonsOf=d=>{const x=d.season||'';if(x.includes('على مدار العام'))return['spring','summer','autumn','winter'];if(x.includes('إلى'))return['autumn','winter','spring'];const o=[];if(x.includes('الربيع'))o.push('spring');if(x.includes('الصيف'))o.push('summer');if(x.includes('الخريف'))o.push('autumn');if(x.includes('الشتاء'))o.push('winter');return o};
 const usedCats=()=>Object.keys(CATS).filter(k=>DEST.some(d=>d.cat===k));
 const TODO = 'تُضاف لاحقًا';
 
@@ -360,7 +362,7 @@ function haversine(a,b){
 /* UI strings. Arabic is the primary language. Edit here. */
 const S={
 ar:{
- nav_trip:'رحلتي',cont_guest:'المتابعة بدون حساب',no_acct:'ليس لديك حساب؟',create_acct:'أنشئ حسابًا',have_acct:'لديك حساب؟',acct_page:'حسابي',acct_in:'أنت مسجّل الدخول باسم {n}.',nav_logout:'تسجيل الخروج',trip_page:'ATHAR | رحلتي',f_purpose:'الغرض من الزيارة',
+ nav_trip:'رحلتي',share:'شارك',share_text:'اكتشف {n} على أثر',near_h:'الأقرب إليك',chip_season:'مناسب لموسم {s}',se_spring:'الربيع',se_summer:'الصيف',se_autumn:'الخريف',se_winter:'الشتاء',cont_guest:'المتابعة بدون حساب',no_acct:'ليس لديك حساب؟',create_acct:'أنشئ حسابًا',have_acct:'لديك حساب؟',acct_page:'حسابي',acct_in:'أنت مسجّل الدخول باسم {n}.',nav_logout:'تسجيل الخروج',trip_page:'ATHAR | رحلتي',f_purpose:'الغرض من الزيارة',
  trip_add:'أضف لرحلتي',trip_in:'في رحلتك ✓',trip_sub:'الأماكن التي اخترتها. رتّبها ثم افتحها كمسار في خرائط جوجل.',
  trip_empty:'لم تضف أي مكان بعد. افتح أي معلم واضغط «أضف لرحلتي».',trip_rm:'إزالة',trip_up:'نقل للأعلى',trip_dn:'نقل للأسفل',
  trip_open:'افتح المسار في خرائط جوجل',trip_total:'المسافة بخط مستقيم بين المحطات: نحو {k} كم',trip_hint:'سجّل الدخول لحفظ رحلتك على حسابك.',
@@ -407,7 +409,7 @@ ar:{
  loc_err:'تعذّر تحديد موقعك. تأكد من تفعيل إذن الموقع في المتصفح.',loc_you:'موقعك الحالي'
 },
 en:{
- nav_trip:'My trip',cont_guest:'Continue without an account',no_acct:'No account yet?',create_acct:'Create an account',have_acct:'Already have an account?',acct_page:'My account',acct_in:'You are logged in as {n}.',nav_logout:'Log out',trip_page:'ATHAR | My trip',f_purpose:'Purpose of visit',
+ nav_trip:'My trip',share:'Share',share_text:'Discover {n} on ATHAR',near_h:'Closest to you',chip_season:'Good for {s}',se_spring:'spring',se_summer:'summer',se_autumn:'autumn',se_winter:'winter',cont_guest:'Continue without an account',no_acct:'No account yet?',create_acct:'Create an account',have_acct:'Already have an account?',acct_page:'My account',acct_in:'You are logged in as {n}.',nav_logout:'Log out',trip_page:'ATHAR | My trip',f_purpose:'Purpose of visit',
  trip_add:'Add to my trip',trip_in:'In your trip ✓',trip_sub:'The places you picked. Put them in order, then open them as a route in Google Maps.',
  trip_empty:'No places yet. Open any landmark and press Add to my trip.',trip_rm:'Remove',trip_up:'Move up',trip_dn:'Move down',
  trip_open:'Open the route in Google Maps',trip_total:'Straight-line distance between stops: about {k} km',trip_hint:'Log in to save your trip to your account.',
@@ -554,7 +556,7 @@ function viewDest(id){
   return `<div class="page"><header class="d-hero"><div class="d-head">${crumbs([[t('crumb_home'),'#map'],[reg(d.region),'#map'],[nm(d)]])}
 <div style="display:grid;gap:14px"><div class="chap"><b class="en">${String(d.n).padStart(2,'0')} / ${DEST.length}</b><span>${cat(d.cat)} · ${reg(d.region)}</span></div>
 <h1 class="d-title">${esc(nm(d))}</h1><div class="d-en ${LANG==='ar'?'':'ar-s'}">${esc(sub(d))}</div><p class="d-intro">${esc(d.intro)}</p></div>
-<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a><button type="button" class="btn btn-ghost" data-trip="${d.id}">${tripLabel(d.id)}</button></div></div>
+<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a><button type="button" class="btn btn-ghost" data-trip="${d.id}">${tripLabel(d.id)}</button><button type="button" class="btn btn-ghost" data-share="${d.id}">${t('share')}</button></div></div>
 <div class="d-art">${art(d.art,d.n,LANG==='ar'?'رسم توضيحي — موضع صورة الموقع':'Placeholder illustration — site photo goes here')}${photoImg(d)}</div></header>
 <main class="grow"><div class="wrap d-body"><section class="d-about"><h2 class="sec">${t('about_h')}</h2>${d.about.map(p=>`<p>${esc(p)}</p>`).join('')}</section>
 <aside class="d-facts"><h2 class="sec">${t('visit_h')}</h2><dl class="facts">
@@ -746,6 +748,13 @@ document.addEventListener('click',e=>{
   if(m){const [id,dir]=m.dataset.tripMv.split(':');const i=TRIP.indexOf(id),j=i+(dir==='up'?-1:1);
     if(i>-1&&j>=0&&j<TRIP.length){[TRIP[i],TRIP[j]]=[TRIP[j],TRIP[i]];CLOUD.saveTrip(TRIP).catch(()=>{});route()}}
 });
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-share]');if(!b)return;
+  e.preventDefault();const d=DEST.find(x=>x.id===b.dataset.share);if(!d)return;
+  const url=location.href.split('#')[0]+'#d-'+d.id,text=t('share_text',{n:nm(d)});
+  if(navigator.share){navigator.share({title:nm(d),text,url}).catch(()=>{});return}
+  window.open('https://wa.me/?text='+encodeURIComponent(text+' '+url),'_blank','noopener');
+});
 function showPage(html){
   if(mapEl)mapEl.style.display='none';
   stage.classList.remove('is-map');
@@ -779,7 +788,7 @@ function buildMap(){
 
   <div class="chips" role="group" aria-label="${t('legend')}">
     <button type="button" class="chip on" data-cat="all">${t('filter_all')}</button>
-    ${catChips}${purpChips}
+    ${catChips}${purpChips}<button type="button" class="chip chip-p" data-season="now">${t('chip_season',{s:t('se_'+curSeason())})}</button>
   </div>
 
   <div class="hud-tools">
@@ -822,6 +831,7 @@ function buildMap(){
       <a class="btn" id="pd-more" href="#">${t('drawer_more')}</a>
       <a class="btn btn-ghost" id="pd-dir" href="#" target="_blank" rel="noopener">${t('drawer_dir')}</a>
       <button type="button" class="btn btn-ghost" id="pd-trip" data-trip="">${t('trip_add')}</button>
+      <button type="button" class="btn btn-ghost" id="pd-share" data-share="">${t('share')}</button>
     </div>
   </div>
 </aside>`;
@@ -893,6 +903,13 @@ function buildMap(){
     return { roadKm: num(roadKm), timeStr };
   }
 
+  function showNearby(){
+    let p=$id('near-panel');if(!p){p=document.createElement('div');p.id='near-panel';p.className='near-panel';mapEl.appendChild(p)}
+    const list=DEST.map(d=>({d,km:haversine(userLL,d.ll)})).sort((a,b)=>a.km-b.km).slice(0,5);
+    p.innerHTML=`<div class="near-h"><b>${t('near_h')}</b><button type="button" class="near-x" aria-label="${t('close')}">×</button></div><ol>${list.map(({d})=>{const est=estimateDrive(userLL,d.ll);return `<li><button type="button" data-near="${d.id}"><span>${esc(nm(d))}</span><small>${est.roadKm} ${LANG==='ar'?'كم':'km'} · ${est.timeStr}</small></button></li>`}).join('')}</ol>`;
+    p.querySelector('.near-x').onclick=()=>p.remove();
+    p.querySelectorAll('[data-near]').forEach(b=>b.onclick=()=>{const d=DEST.find(x=>x.id===b.dataset.near);openPlaceDrawer(d);M.flyTo(d.ll,11,{duration:1.2})});
+  }
   $id('btn-loc').onclick = () => {
     if(!navigator.geolocation){ alert(t('loc_err')); return; }
     navigator.geolocation.getCurrentPosition(pos => {
@@ -901,6 +918,7 @@ function buildMap(){
       userMarker = L.circleMarker(userLL, { radius: 8, color: '#eecf6d', weight: 2.5, fillColor: '#720e07', fillOpacity: 1 }).addTo(M);
       userMarker.bindTooltip(t('loc_you'), { permanent: true, direction: 'top', offset: [0, -10], className: 'mk-tip' });
       $id('btn-loc').classList.add('on');
+      showNearby();
       M.flyTo(userLL, 10, { animate: true, duration: 1.4 });
       if(selId){
         const curD = DEST.find(x=>x.id===selId);
@@ -941,7 +959,7 @@ function buildMap(){
     $id('pd-meta').innerHTML = `<span class="pd-tag">${reg(d.region)}</span><span class="pd-tag">${esc(d.gov)}</span><span class="pd-tag">${esc(d.season)}</span><span class="pd-tag">${esc(d.dur)}</span>`;
     $id('pd-more').href = '#d-' + d.id;
     $id('pd-dir').href = `https://www.google.com/maps/dir/?api=1&destination=${d.ll[0]},${d.ll[1]}`;
-    $id('pd-trip').dataset.trip = d.id; syncTripBtns();
+    $id('pd-trip').dataset.trip = d.id; syncTripBtns(); $id('pd-share').dataset.share = d.id;
     updateDrawerDistance(d);
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden', 'false');
@@ -981,8 +999,9 @@ function buildMap(){
   M.on('click', closePlaceDrawer);
 
   /* Category + purpose filters */
-  let fCat='all',fPur='all';
-  const applyFilters=()=>{Object.values(markers).forEach(({el,data})=>{const node=el();if(!node)return;node.classList.toggle('is-hidden',!((fCat==='all'||data.cat===fCat)&&(fPur==='all'||data.purpose===fPur)))})};
+  let fCat='all',fPur='all',fSea=false;
+  const applyFilters=()=>{Object.entries(markers).forEach(([id,{el}])=>{const node=el();const data=DEST.find(x=>x.id===id);if(!node||!data)return;node.classList.toggle('is-hidden',!((fCat==='all'||data.cat===fCat)&&(fPur==='all'||data.purpose===fPur)&&(!fSea||seasonsOf(data).includes(curSeason()))))})};
+  mapEl.querySelectorAll('.chip[data-season]').forEach(btn=>{btn.onclick=()=>{fSea=!fSea;btn.classList.toggle('on',fSea);applyFilters()}});
   mapEl.querySelectorAll('.chip[data-cat]').forEach(btn=>{btn.onclick=()=>{mapEl.querySelectorAll('.chip[data-cat]').forEach(c=>c.classList.remove('on'));btn.classList.add('on');fCat=btn.dataset.cat;applyFilters()}});
   mapEl.querySelectorAll('.chip[data-purpose]').forEach(btn=>{btn.onclick=()=>{const on=!btn.classList.contains('on');mapEl.querySelectorAll('.chip[data-purpose]').forEach(c=>c.classList.remove('on'));btn.classList.toggle('on',on);fPur=on?btn.dataset.purpose:'all';applyFilters()}});
 
@@ -1091,6 +1110,7 @@ window.addEventListener('hashchange',()=>{if(stage)route()});
 window.addEventListener('resize',()=>{if(mapObj&&mapEl&&mapEl.style.display!=='none')mapObj.invalidateSize()});
 applyLangAttrs();mount();route();
 CLOUD.onAuth(()=>{refreshAuthUI();tripLoad();if((location.hash||'')==='#signup')route();const cb=$id('community-body');if(cb)loadCommunity(cb.dataset.place)});
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 CLOUD.init().then(()=>{AUTH_READY=true;refreshAuthUI();tripLoad();maybeLogin()}).catch(()=>{AUTH_READY=true;maybeLogin()});
 if(!CHOSEN)showGate();
 })();
