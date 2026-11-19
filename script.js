@@ -362,7 +362,7 @@ function haversine(a,b){
 /* UI strings. Arabic is the primary language. Edit here. */
 const S={
 ar:{
- nav_trip:'رحلتي',share:'شارك',share_text:'اكتشف {n} على أثر',near_h:'الأقرب إليك',chip_season:'مناسب لموسم {s}',se_spring:'الربيع',se_summer:'الصيف',se_autumn:'الخريف',se_winter:'الشتاء',cont_guest:'المتابعة بدون حساب',no_acct:'ليس لديك حساب؟',create_acct:'أنشئ حسابًا',have_acct:'لديك حساب؟',acct_page:'حسابي',acct_in:'أنت مسجّل الدخول باسم {n}.',nav_logout:'تسجيل الخروج',trip_page:'ATHAR | رحلتي',f_purpose:'الغرض من الزيارة',
+ nav_trip:'رحلتي',theme_dark:'الوضع الليلي',theme_light:'الوضع النهاري',petra_guide:'دليل البتراء المفصّل',share:'شارك',share_text:'اكتشف {n} على أثر',near_h:'الأقرب إليك',chip_season:'مناسب لموسم {s}',se_spring:'الربيع',se_summer:'الصيف',se_autumn:'الخريف',se_winter:'الشتاء',cont_guest:'المتابعة بدون حساب',no_acct:'ليس لديك حساب؟',create_acct:'أنشئ حسابًا',have_acct:'لديك حساب؟',acct_page:'حسابي',acct_in:'أنت مسجّل الدخول باسم {n}.',nav_logout:'تسجيل الخروج',trip_page:'ATHAR | رحلتي',f_purpose:'الغرض من الزيارة',
  trip_add:'أضف لرحلتي',trip_in:'في رحلتك ✓',trip_sub:'الأماكن التي اخترتها. رتّبها ثم افتحها كمسار في خرائط جوجل.',
  trip_empty:'لم تضف أي مكان بعد. افتح أي معلم واضغط «أضف لرحلتي».',trip_rm:'إزالة',trip_up:'نقل للأعلى',trip_dn:'نقل للأسفل',
  trip_open:'افتح المسار في خرائط جوجل',trip_total:'المسافة بخط مستقيم بين المحطات: نحو {k} كم',trip_hint:'سجّل الدخول لحفظ رحلتك على حسابك.',
@@ -409,7 +409,7 @@ ar:{
  loc_err:'تعذّر تحديد موقعك. تأكد من تفعيل إذن الموقع في المتصفح.',loc_you:'موقعك الحالي'
 },
 en:{
- nav_trip:'My trip',share:'Share',share_text:'Discover {n} on ATHAR',near_h:'Closest to you',chip_season:'Good for {s}',se_spring:'spring',se_summer:'summer',se_autumn:'autumn',se_winter:'winter',cont_guest:'Continue without an account',no_acct:'No account yet?',create_acct:'Create an account',have_acct:'Already have an account?',acct_page:'My account',acct_in:'You are logged in as {n}.',nav_logout:'Log out',trip_page:'ATHAR | My trip',f_purpose:'Purpose of visit',
+ nav_trip:'My trip',theme_dark:'Night mode',theme_light:'Day mode',petra_guide:'Petra detailed guide',share:'Share',share_text:'Discover {n} on ATHAR',near_h:'Closest to you',chip_season:'Good for {s}',se_spring:'spring',se_summer:'summer',se_autumn:'autumn',se_winter:'winter',cont_guest:'Continue without an account',no_acct:'No account yet?',create_acct:'Create an account',have_acct:'Already have an account?',acct_page:'My account',acct_in:'You are logged in as {n}.',nav_logout:'Log out',trip_page:'ATHAR | My trip',f_purpose:'Purpose of visit',
  trip_add:'Add to my trip',trip_in:'In your trip ✓',trip_sub:'The places you picked. Put them in order, then open them as a route in Google Maps.',
  trip_empty:'No places yet. Open any landmark and press Add to my trip.',trip_rm:'Remove',trip_up:'Move up',trip_dn:'Move down',
  trip_open:'Open the route in Google Maps',trip_total:'Straight-line distance between stops: about {k} km',trip_hint:'Log in to save your trip to your account.',
@@ -464,6 +464,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const AR=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
 const LOGO='athar-logo.jpg';
 const ICON={
+ moon:'<svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/></svg>',
+ sun:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/></svg>',
  trip:'<svg viewBox="0 0 24 24"><path d="M6 20a2 2 0 100-4 2 2 0 000 4zM18 8a2 2 0 100-4 2 2 0 000 4zM8 18h6a3 3 0 000-6h-4a3 3 0 010-6h6"/></svg>',
  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7M5 10v10h5v-6h4v6h5V10"/></svg>',
  info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
@@ -556,7 +558,7 @@ function viewDest(id){
   return `<div class="page"><header class="d-hero"><div class="d-head">${crumbs([[t('crumb_home'),'#map'],[reg(d.region),'#map'],[nm(d)]])}
 <div style="display:grid;gap:14px"><div class="chap"><b class="en">${String(d.n).padStart(2,'0')} / ${DEST.length}</b><span>${cat(d.cat)} · ${reg(d.region)}</span></div>
 <h1 class="d-title">${esc(nm(d))}</h1><div class="d-en ${LANG==='ar'?'':'ar-s'}">${esc(sub(d))}</div><p class="d-intro">${esc(d.intro)}</p></div>
-<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a><button type="button" class="btn btn-ghost" data-trip="${d.id}">${tripLabel(d.id)}</button><button type="button" class="btn btn-ghost" data-share="${d.id}">${t('share')}</button></div></div>
+<div class="d-actions"><a class="btn" href="#map">${ICON.arrow}${t('back')}</a><a class="btn btn-ghost" href="#explore-${d.id}" data-scroll="explore">${t('explore_btn')}</a><button type="button" class="btn btn-ghost" data-trip="${d.id}">${tripLabel(d.id)}</button><button type="button" class="btn btn-ghost" data-share="${d.id}">${t('share')}</button>${d.id==='petra'?`<a class="btn" href="#petra-guide">${t('petra_guide')}</a>`:''}</div></div>
 <div class="d-art">${art(d.art,d.n,LANG==='ar'?'رسم توضيحي — موضع صورة الموقع':'Placeholder illustration — site photo goes here')}${photoImg(d)}</div></header>
 <main class="grow"><div class="wrap d-body"><section class="d-about"><h2 class="sec">${t('about_h')}</h2>${d.about.map(p=>`<p>${esc(p)}</p>`).join('')}</section>
 <aside class="d-facts"><h2 class="sec">${t('visit_h')}</h2><dl class="facts">
@@ -598,7 +600,7 @@ function mount(){
   root.innerHTML=`<div class="shell${collapsed?' collapsed':''}" id="shell"><div class="scrim" id="scrim"></div>
 <aside class="side" id="side" aria-label="${t('side_aria')}"><button class="drawer-close" id="dclose" aria-label="${t('menu_close')}">${ICON.x}</button>
 <div class="logo-box"><img src="${LOGO}" alt="${t('logo_alt')}" width="1154" height="912"></div>
-<nav class="side-nav"><a class="nav-item" data-nav="map" href="#map" title="${t('nav_home')}">${ICON.home}<span>${t('nav_home')}</span></a><a class="nav-item" data-nav="about" href="#about" title="${t('nav_about')}">${ICON.info}<span>${t('nav_about')}</span></a><a class="nav-item" data-nav="trip" href="#trip" title="${t('nav_trip')}">${ICON.trip}<span>${t('nav_trip')}</span></a><button type="button" class="nav-item" id="login-open" title="${t('nav_login')}">${ICON.user}<span>${t('nav_login')}</span></button><button type="button" class="nav-item" id="lang-sw" title="${t('lang_title')}">${ICON.globe}<span>${t('lang_btn')}</span></button></nav>
+<nav class="side-nav"><a class="nav-item" data-nav="map" href="#map" title="${t('nav_home')}">${ICON.home}<span>${t('nav_home')}</span></a><a class="nav-item" data-nav="about" href="#about" title="${t('nav_about')}">${ICON.info}<span>${t('nav_about')}</span></a><a class="nav-item" data-nav="trip" href="#trip" title="${t('nav_trip')}">${ICON.trip}<span>${t('nav_trip')}</span></a><button type="button" class="nav-item" id="login-open" title="${t('nav_login')}">${ICON.user}<span>${t('nav_login')}</span></button><button type="button" class="nav-item" id="lang-sw" title="${t('lang_title')}">${ICON.globe}<span>${t('lang_btn')}</span></button><button type="button" class="nav-item" id="theme-sw">${ICON.moon}<span></span></button></nav>
 <div class="side-foot"><button type="button" class="collapse-btn" id="collapse" aria-expanded="${!collapsed}" aria-label="${collapsed?t('expand'):t('collapse')}">${ICON.chev}<span>${t('collapse')}</span></button></div></aside>
 <button class="menu-btn" id="menu" aria-label="${t('menu_open')}">${ICON.menu}</button>
 <div class="stage is-map" id="stage"></div></div>
@@ -613,6 +615,8 @@ ${[1,2,3,4].map(i=>`<li><div><b>${t('h'+i+'t')}</b>${t('h'+i)}</div></li>`).join
   $id('help-btn').onclick=()=>toggleHelp();$id('help-x').onclick=()=>{toggleHelp(false);$id('help-btn').focus()};
   $id('login-open').onclick=()=>{if(CLOUD.user)CLOUD.signOut();else openLogin()};
   $id('lang-sw').onclick=()=>setLang(LANG==='ar'?'en':'ar');
+  $id('theme-sw').onclick=()=>applyTheme(curTheme()==='dark'?'light':'dark',true);
+  applyTheme(curTheme(),false);
   document.querySelectorAll('.side a').forEach(a=>a.addEventListener('click',closeDrawer));
   refreshAuthUI();
 }
@@ -626,6 +630,7 @@ function route(){
     if(d){showPage(viewDest(d.id));loadCommunity(d.id);setNav('map');document.title='ATHAR | '+nm(d);return}
   }
   if(h==='signup'){showPage(viewSignup());bindSignup();setNav('');document.title='ATHAR | '+t('signup_title');return}
+  if(h==='petra-guide'&&window.PETRA){showPage(viewPetra());initPetraMap();setNav('map');document.title='ATHAR | '+window.PETRA.ui[LANG].title;return}
   if(h==='trip'){showPage(viewTrip());setNav('trip');document.title=t('trip_page');return}
   if(h==='about'){showPage(viewAbout());setNav('about');document.title=t('title_about');return}
   showMap();setNav('map');document.title=t('title_home');
@@ -755,7 +760,48 @@ document.addEventListener('click',e=>{
   if(navigator.share){navigator.share({title:nm(d),text,url}).catch(()=>{});return}
   window.open('https://wa.me/?text='+encodeURIComponent(text+' '+url),'_blank','noopener');
 });
+let petraMap=null;
+function viewPetra(){
+  const P=window.PETRA,U=P.ui[LANG],pd=DEST.find(x=>x.id==='petra');
+  return `<div class="page"><header class="wrap a-hero">${crumbs([[t('crumb_home'),'#map'],[nm(pd),'#d-petra'],[U.title]])}
+<h1>${U.title}</h1><p class="lead">${U.lead}</p><div class="pg-chips">${U.chips.map(c=>`<span>${c}</span>`).join('')}</div></header>
+<main class="grow"><div class="wrap pg">
+<div id="petra-map" class="pg-map" role="img" aria-label="${U.map_alt}"></div><p class="comm-note">${U.map_note}</p>
+<h2 class="sec">${U.stops_h}</h2>
+<ol class="pg-stops">${P.stops.map((st,i)=>{const c=st[LANG];return `<li class="pg-stop${st.kind==='branch'?' branch':''}" id="ps-${st.id}"><span class="trip-n">${num(i+1)}</span><div><h3>${c.n}${st.approx?` <small>${U.approx}</small>`:''}</h3><p class="pg-meta">${st.kind==='main'?U.main:U.branch}</p><p>${c.s}</p><ul>${c.f.map(f=>`<li>${f}</li>`).join('')}</ul>${c.tip?`<p class="pg-tip"><b>${U.tip}</b> ${c.tip}</p>`:''}<button type="button" class="btn btn-ghost" data-pfly="${st.id}">${U.show}</button></div></li>`}).join('')}</ol>
+<h2 class="sec">${U.trails_h}</h2><div class="pg-trails">${P.trails.map(x=>`<div class="acct-card"><h3>${x[LANG].n}</h3><p>${x[LANG].d}</p></div>`).join('')}</div>
+<h2 class="sec">${U.tips_h}</h2><ul class="pg-tips">${U.tips.map(x=>`<li>${x}</li>`).join('')}</ul>
+<p class="comm-note">${U.foot} <a href="https://visitpetra.jo" target="_blank" rel="noopener">visitpetra.jo</a></p>
+</div></main>${footer()}</div>`;
+}
+function initPetraMap(){
+  const el=$id('petra-map');if(!el||!window.L)return;
+  const P=window.PETRA;
+  petraMap=L.map(el,{scrollWheelZoom:false}).setView([30.3262,35.444],15);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:18,attribution:'Imagery © Esri'}).addTo(petraMap);
+  const by=Object.fromEntries(P.stops.map(x=>[x.id,x]));
+  L.polyline(P.stops.filter(x=>x.kind==='main').map(x=>x.ll),{color:'#eecf6d',weight:3,opacity:.95}).addTo(petraMap);
+  [['qasr','monastery'],['theatre','highplace']].forEach(([a,b])=>L.polyline([by[a].ll,by[b].ll],{color:'#eecf6d',weight:3,dashArray:'6 8',opacity:.95}).addTo(petraMap));
+  const mk={};
+  P.stops.forEach((st,i)=>{
+    const m=L.marker(st.ll,{icon:L.divIcon({className:'pm'+(st.kind==='branch'?' pm-b':''),html:'<span>'+(i+1)+'</span>',iconSize:[30,30],iconAnchor:[15,15]}),title:st[LANG].n}).addTo(petraMap);
+    m.bindTooltip(st[LANG].n);
+    m.on('click',()=>{const c=$id('ps-'+st.id);if(!c)return;document.querySelectorAll('.pg-stop.hl').forEach(x=>x.classList.remove('hl'));c.classList.add('hl');c.scrollIntoView({behavior:'smooth',block:'center'})});
+    mk[st.id]=m;
+  });
+  document.querySelectorAll('[data-pfly]').forEach(b=>b.onclick=()=>{const st=by[b.dataset.pfly];el.scrollIntoView({behavior:'smooth',block:'center'});petraMap.flyTo(st.ll,17,{duration:1});mk[st.id].openTooltip()});
+  petraMap.fitBounds(L.latLngBounds(P.stops.map(x=>x.ll)).pad(.15));
+}
+const curTheme=()=>document.documentElement.dataset.theme==='dark'?'dark':'light';
+function applyTheme(th,save){
+  document.documentElement.dataset.theme=th;
+  if(save){try{localStorage.setItem('athar-theme',th)}catch(e){}}
+  const b=$id('theme-sw');
+  if(b){const lab=t(th==='dark'?'theme_light':'theme_dark');b.querySelector('span').textContent=lab;b.title=lab;b.firstElementChild.outerHTML=th==='dark'?ICON.sun:ICON.moon}
+  const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=th==='dark'?'#17100c':'#420308';
+}
 function showPage(html){
+  if(petraMap){petraMap.remove();petraMap=null}
   if(mapEl)mapEl.style.display='none';
   stage.classList.remove('is-map');
   Array.from(stage.children).forEach(c=>{if(c!==mapEl)c.remove()});
