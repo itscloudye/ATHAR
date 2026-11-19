@@ -1,7 +1,7 @@
 /* ATHAR service worker: network first, so updates show up, with a cached copy for when the visitor is offline.
    Map tiles and Supabase requests are not cached. */
-const CACHE='athar-v1';
-const CORE=['./','index.html','style.css','script.js','cloud.js','config.js','athar-logo.jpg','manifest.webmanifest'];
+const CACHE='athar-v3';
+const CORE=['./','index.html','style.css','script.js','cloud.js','petra.js','config.js','athar-logo.jpg','manifest.webmanifest'];
 const CDN=['cdnjs.cloudflare.com','cdn.jsdelivr.net','fonts.googleapis.com','fonts.gstatic.com'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==CACHE).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
